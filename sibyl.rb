@@ -69,6 +69,13 @@ bot.on :message do |msg|
       responses.each { |a| bot.say(a) }
 end
 
+bot.on :message do |msg|
+	case msg.message
+	when /[Hh]ello. #{nick}/ then
+		bot.privmsg(msg.channel, "Hello: #{msg.nick}")
+	end
+end
+
 bot.stop! /^\.leave$/ do |msg|
     bot.channels.each do |channel|
     	bot.notice(channel, "leaving")
