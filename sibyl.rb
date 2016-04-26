@@ -103,7 +103,7 @@ bot.on :message do |msg|
 		h.push("commands:")
 		h.push("	- .quote")
 		h.push("	- .cmd")
-		h.push("all commands have a help that can be accessed: $CMC --help")
+		h.push("all commands have a help that can be accessed: $CMD --help")
 		h.each do |string|
 			bot.privmsg(msg.nick, string)
 		end
