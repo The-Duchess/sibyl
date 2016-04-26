@@ -5,7 +5,7 @@ require 'rirc'
 config = ConfigClass.new
 
 #-------~-----~--~------~---~-------~----~------------~---~-----
-#setup
+# setup
 #-------~-----~--~------~---~-------~----~------------~---~-----
 network = config.acquire[:network]
 port = config.acquire[:port]
@@ -22,10 +22,9 @@ plugin_folder = config.acquire[:plugindir]
 plugins_list = config.acquire[:plugins]
 
 bot = IRCBot.new(network, port, nick, username, realname)
-#puts admins.to_s
 bot.set_admins(admins)
 
-#puts "Loading Plugins"
+# puts "Loading Plugins"
 plug = Plugin_manager.new(plugin_folder)
 # plugins_list.each { |a| t = plug.plugin_load(a); puts "		#{t}"; }
 
@@ -82,6 +81,35 @@ bot.on :message do |msg|
 	end
 end
 
+# help
+bot.on :message do |msg|
+	case msg.message
+	when /^#{bot.nick_name}.\s?source\??$/ then
+		r = []
+		r.push("sibyl source: https://github.com/The-Duchess/sibyl")
+		r.push("sibyl is built on rirc which can be found on github: https://github.com/The-Duchess/ruby-irc-framework")
+		r.each do |string|
+			bot.privmsg(msg.nick, string)
+		end
+	when /^\.source$/ then
+		r = []
+		r.push("sibyl source: https://github.com/The-Duchess/sibyl")
+		r.push("sibyl is built on rirc which can be found on github: https://github.com/The-Duchess/ruby-irc-framework")
+		r.each do |string|
+			bot.privmsg(msg.nick, string)
+		end
+	when /^\.help$/ then
+		h = []
+		h.push("commands:")
+		h.push("	- .quote")
+		h.push("	- .cmd")
+		h.push("all commands have a help that can be accessed: $CMC --help")
+		h.each do |string|
+			bot.privmsg(msg.nick, string)
+		end
+	end
+end
+
 # cmd
 bot.on :message do |msg|
 	case msg.message
@@ -110,7 +138,7 @@ bot.on :message do |msg|
 					ircbot.privmsg(ircmsg.channel, say_t)
 				end
 			when /^kick$/ then # .cmd on // do kick user chan reason
-				commands on reg do |ircbot, ircmsg, pluginmgr|
+				commands.on reg do |ircbot, ircmsg, pluginmgr|
 					args = arg
 					user = args[0]
 					chan = args[1]
@@ -150,24 +178,21 @@ def save names_, quotes_
 	end
 end
 
-	lines  = file "./quotes.txt"
-	names  = []
-	quotes = {}
-	quotes_= []
+lines   = file "./quotes.txt"
+names   = []
+quotes  = {}
+quotes_ = []
 
-	lines.each do |line|
-		name  = line.split(":")[0]
-		quote = line[(name.length+1)..-1]
-
-		if !names.include? name
-			names.push(name)
-		end
-
-		quotes[name] ||= []
-		quotes[name] << quote
-
-		quotes_ << "#{quote} - #{name}"
+lines.each do |line|
+	name  = line.split(":")[0]
+	quote = line[(name.length+1)..-1]
+	if !names.include? name
+		names.push(name)
 	end
+	quotes[name] ||= []
+	quotes[name] << quote
+	quotes_ << "#{quote} - #{name}"
+end
 
 # quote
 bot.on :message do |msg|
